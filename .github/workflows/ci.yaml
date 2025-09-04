@@ -1,0 +1,70 @@
+name: CI – Playwright API + UI Tests with Allure
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: http://localhost:3001
+      UI_URL: http://localhost:3002
+      LOG_API_RESPONSES: true
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # 3. Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # 4. Install Playwright browsers
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      # 5. Start mock API + UI servers in background
+      - name: Start mock servers
+        run: |
+          npx ts-node src/mocks/mockApiServer.ts &
+          API_PID=$!
+          npx ts-node src/mocks/uiServer.ts &
+          UI_PID=$!
+          echo "API_PID=$API_PID" >> $GITHUB_ENV
+          echo "UI_PID=$UI_PID" >> $GITHUB_ENV
+          sleep 3
+
+      # 6. Run all tests (API + UI)
+      - name: Run tests
+        run: npx playwright test
+
+      # 7. Kill servers after tests
+      - name: Stop mock servers
+        if: always()
+        run: |
+          kill $API_PID || true
+          kill $UI_PID || true
+
+      # 8. Generate Allure report
+      - name: Generate Allure report
+        run: |
+          npm run allure:generate
+          mkdir -p allure-history
+          cp -r allure-report/* allure-history/
+
+      # 9. Upload Allure report artifact
+      - name: Upload Allure report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
