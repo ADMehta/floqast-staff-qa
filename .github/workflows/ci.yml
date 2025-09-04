@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Build TypeScript
+      - name: Build project
+        run: npm run build
+
+      # Start mock API and UI servers in background
+      - name: Start mock servers
+        run: npm run serve &
+      
+      # Install Playwright browsers
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      # Run API tests
+      - name: Run API tests
+        env:
+          BASE_URL: http://localhost:3001
+          LOG_API: 'true'
+        run: npm run test:api
+
+      # Run UI tests
+      - name: Run UI tests
+        env:
+          UI_URL: http://localhost:3002
+        run: npm run test:ui
+
+      # Run performance probe
+      - name: Run performance tests
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: tests/performance/k6-transaction.js
+        env:
+          BASE_URL: http://localhost:3001
+
+      # Upload Playwright HTML report
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+
+      # Upload API logs
+      - name: Upload API logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-logs
+          path: reports/api.log
+      
+      # Generte Allure Reports
+      - name: Generate Allure report
+        run: npm run allure:generate
+
+      - name: Upload Allure report
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: allure-report

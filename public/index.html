@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Mock Fintech UI – Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+        }
+
+        input,
+        select,
+        button {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            width: 250px;
+        }
+
+        #msg {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>User Registration</h1>
+
+    <!-- Registration form -->
+    <form id="register">
+        <label>
+            Name:
+            <input id="name" placeholder="Name" />
+        </label>
+        <label>
+            Email:
+            <input id="email" placeholder="Email" />
+        </label>
+        <label>
+            Account Type:
+            <select id="accountType">
+                <option value="basic">basic</option>
+                <option value="premium">premium</option>
+            </select>
+        </label>
+        <button id="submit">Register</button>
+        <div id="msg"></div>
+    </form>
+
+    <script>
+        // Attach click handler to the Register button
+        document.getElementById('submit').onclick = async (e) => {
+            e.preventDefault(); // Prevent form submission reload
+
+            // Build payload from form fields
+            const payload = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                accountType: document.getElementById('accountType').value
+            };
+
+            try {
+                // Send POST request to /api/users
+                const res = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                // Update message div based on response
+                const msg = document.getElementById('msg');
+                msg.innerText = res.ok ? 'Registered!' : `Error: ${res.status}`;
+            } catch (err) {
+                document.getElementById('msg').innerText = 'Network error';
+            }
+        };
+    </script>
+</body>
+
+</html>

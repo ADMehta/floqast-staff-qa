@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mock Fintech UI – Transaction</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    label { display: block; margin-top: 1rem; }
+    input, select, button { margin-top: 0.5rem; padding: 0.5rem; width: 250px; }
+    #msg { margin-top: 1rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Create Transaction</h1>
+
+  <!-- Transaction form -->
+  <form id="transaction">
+    <label>
+      User ID:
+      <input id="userId" placeholder="User ID" />
+    </label>
+    <label>
+      Amount:
+      <input id="amount" placeholder="Amount" type="number" step="0.01" />
+    </label>
+    <label>
+      Recipient ID:
+      <input id="recipientId" placeholder="Recipient ID" />
+    </label>
+    <label>
+      Type:
+      <select id="type">
+        <option value="transfer">transfer</option>
+        <option value="payment">payment</option>
+        <option value="refund">refund</option>
+      </select>
+    </label>
+    <button id="send">Send</button>
+    <div id="msg"></div>
+  </form>
+
+  <script>
+    // Attach click handler to the Send button
+    document.getElementById('send').onclick = async (e) => {
+      e.preventDefault(); // Prevent form submission reload
+
+      // Build payload from form fields
+      const payload = {
+        userId: document.getElementById('userId').value,
+        amount: parseFloat(document.getElementById('amount').value),
+        recipientId: document.getElementById('recipientId').value,
+        type: document.getElementById('type').value
+      };
+
+      try {
+        // Send POST request to /api/transactions
+        const res = await fetch('/api/transactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        // Update message div based on response
+        const msg = document.getElementById('msg');
+        msg.innerText = res.ok ? 'Transaction successful!' : `Error: ${res.status}`;
+      } catch (err) {
+        document.getElementById('msg').innerText = 'Network error';
+      }
+    };
+  </script>
+</body>
+</html>
