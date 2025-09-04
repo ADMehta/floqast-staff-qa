@@ -1,5 +1,3 @@
----
-
 ```markdown
 # FloQast Staff QA Assessment – Playwright + Allure Framework
 
