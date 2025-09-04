@@ -1,7 +1,10 @@
 ```markdown
 # FloQast Staff QA Assessment – Playwright + Allure Framework
 
-This repository contains an end‑to‑end **API + UI test automation framework** built with [Playwright](https://playwright.dev/), [TypeScript](https://www.typescriptlang.org/), and [Allure Reporting](https://docs.qameta.io/allure/).
+This repository contains an end‑to‑end **API + UI test automation framework** built with 
+[Playwright](https://playwright.dev/), 
+[TypeScript](https://www.typescriptlang.org/), and 
+[Allure Reporting](https://docs.qameta.io/allure/)
 
 It includes:
 
@@ -25,15 +28,13 @@ Before you begin, ensure you have:
   ```bash
   npm install -g allure-commandline --save-dev
   ```
-- **Git** installed and configured
-
 ---
 
 ## 🚀 Cloning the Repository
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/ADMehta/floqast-staff-qa.git
+cd floqast-staff-qa
 ```
 
 ---
@@ -57,11 +58,7 @@ This will install:
 
 Environment variables are managed via `.env` files.
 
-1. Copy the example file:
-   ```bash
-   cp .env.example .env
-   ```
-2. Update values as needed:
+1. Update values as needed in .env - enviornment file:
    ```env
    BASE_URL=http://localhost:3001
    UI_URL=http://localhost:3002
@@ -73,7 +70,7 @@ Environment variables are managed via `.env` files.
 
 ## 🖥 Running Locally
 
-### 1. Start API + UI servers and run all tests
+### 1. Start API + UI servers and run ALL tests
 ```bash
 npm run serve
 ```
@@ -142,60 +139,18 @@ This repo includes a `.github/workflows/ci.yml` workflow that:
 5. Runs the full test suite
 6. Uploads the Allure results as an artifact
 
-**Example workflow file** (`.github/workflows/ci.yml`):
-
-```yaml
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps
-
-      - name: Run tests
-        run: npm run test:all
-
-      - name: Generate Allure report
-        run: |
-          npm run allure:generate
-          mkdir -p allure-history
-          cp -r allure-report/* allure-history/
-
-      - name: Upload Allure report artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report
-          path: allure-report
-```
-
+**CICD workflow file** (`.github/workflows/ci.yml`):
 ---
 
 ## 🧹 Useful Commands
 
 | Command | Description |
 |---------|-------------|
-| `npm run lint` | Run ESLint checks |
-| `npm run typecheck` | Run TypeScript type checks |
-| `npm run perf` | Run k6 performance tests |
-| `npm run build` | Compile TypeScript |
+| `npm run serve` | Run ALL Tests (UI+API)  |
+| `npm run test:api:with-server` | Run only API Tests   |
+| `npm run test:ui:with-server`| Run only API Tests |
+| `npm run allure:generate ` | Generates test report |
+| `npm run allure:opens ` | Opens test report in browser|
 
 ---
 
@@ -212,6 +167,5 @@ jobs:
 
 This project is for assessment purposes only and not licensed for production use.
 ```
-
 ---
- I  also added a video recording section to visually show the test run and Allure report 
+Also added a video recording section to visually show the hiring manager the test run and Allure report 
