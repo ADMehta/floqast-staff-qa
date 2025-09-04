@@ -1,6 +1,3 @@
-Here’s your **fully formatted `README.md`** — you can copy‑paste this directly into your repo.  
-It’s written to impress a hiring manager, with clear step‑by‑step instructions for running locally and in CI/CD via GitHub Actions.
-
 ---
 
 ```markdown
@@ -219,4 +216,4 @@ This project is for assessment purposes only and not licensed for production use
 ```
 
 ---
- I  also added a video recording section to visually show the hiring manager the test run and Allure report 
+ I  also added a video recording section to visually show the test run and Allure report 
